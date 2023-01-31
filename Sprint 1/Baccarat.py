@@ -1,8 +1,11 @@
 """
 Baccarat Simulation Game for Sprint 1
 Cameron Dolly
+
+simulate() runs one round of the game and returns the result, then using the loop below the function, you can run the game any number of times and find the probability of percentage of times that the player or banker wins, or they tie.
 """
 from random import randint
+
 
 def simulate():
   """
@@ -124,6 +127,6 @@ playerPercent = (playerWins / gamesPlayed) * 100
 bankerPercent = (bankerWins / gamesPlayed) * 100
 tiePercent = (ties / gamesPlayed) * 100
 
-print(playerPercent)
-print(bankerPercent)
-print(tiePercent)
+print("Player Win Percentage: " + str(playerPercent) + "%")
+print("Banker Win Percentage: " + str(bankerPercent) + "%")
+print("Tie Percentage: " + str(tiePercent) + "%")
