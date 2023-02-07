@@ -117,16 +117,19 @@ ties = 0
 for i in range(gamesPlayed):
   result = simulate()
   if (result == 0):
-    bankerWins += 1
-  elif (result == 1):
     playerWins += 1
+  elif (result == 1):
+    bankerWins += 1
   elif (result == -1):
     ties += 1
 
-playerPercent = (playerWins / gamesPlayed) * 100
-bankerPercent = (bankerWins / gamesPlayed) * 100
-tiePercent = (ties / gamesPlayed) * 100
+playerPercent = (playerWins / gamesPlayed)
+bankerPercent = (bankerWins / gamesPlayed)
+tiePercent = (ties / gamesPlayed)
 
-print("Player Win Percentage: " + str(playerPercent) + "%")
-print("Banker Win Percentage: " + str(bankerPercent) + "%")
-print("Tie Percentage: " + str(tiePercent) + "%")
+print("Player Win Probability: " + str(playerPercent))
+print("Banker Win Probability: " + str(bankerPercent))
+print("Tie Probability: " + str(tiePercent))
+
+houseEdge = (playerPercent * 1) + (bankerPercent * -1) + (tiePercent * 0)
+print("The house edge is " + str(houseEdge))
