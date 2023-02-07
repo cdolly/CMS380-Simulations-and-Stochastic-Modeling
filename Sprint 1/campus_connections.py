@@ -100,10 +100,17 @@ def calc_interactions(courses_per_student, students_per_course):
   uniqueInteractions = {}
   interactions = 0
   for student_id in courses_per_student:
-    list = courses_per_student[student_id]
+    listCourse = courses_per_student[student_id]
+    interactionsList = []
 
-    for x in list:
-      interactions += (len(students_per_course[x]) - 1)
+    for course in listCourse:
+
+      for x in students_per_course[course]:
+
+        if x not in interactionsList:
+          interactionsList.append(x)
+
+    interactions = len(interactionsList)
     uniqueInteractions[student_id] = interactions
     interactions = 0
 
@@ -179,6 +186,8 @@ calc_median(students_per_course)
 
 make_hist(students_per_course)
 make_boxplot(students_per_course)
+
+calc_interactions(courses_per_student, students_per_course)
 
 makeBoxplotInteractions(courses_per_student, students_per_course)
 
