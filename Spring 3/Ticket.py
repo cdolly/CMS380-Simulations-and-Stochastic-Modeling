@@ -1,20 +1,21 @@
 import random
 
+
 def simulate():
   # Initialize the list of seats to be all empty
   numSeats = 100
-  currentPassenger = 1
+  currentPassenger = 0
   seats = []
   for i in range(numSeats):
     seats.append(-1)
 
   # Choose a random seat for the first passenger
-  currentSeat = random.randint(1, numSeats - 1)
+  currentSeat = random.randint(0, numSeats - 1)
 
   # Mark the first passenger's seat as taken
   seats[currentSeat] = currentPassenger
   currentPassenger += 1
-  currentSeat = 1
+  currentSeat = 0
   assigning = True
   # Loop over the remaining passengers
   while (assigning == True):
@@ -29,9 +30,9 @@ def simulate():
     else:
       # If the assigned seat is already taken, choose a random empty seat
       for i in range(numSeats):
-        randomSeat = random.randint(1, numSeats)
-        if seats[i] == -1:
-          seats[randomSeat - 1] = currentPassenger
+        randomSeat = random.randint(0, numSeats - 1)
+        if seats[randomSeat] == -1:
+          seats[randomSeat] = currentPassenger
           break
     currentPassenger += 1
     currentSeat += 1
