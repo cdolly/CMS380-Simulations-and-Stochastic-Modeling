@@ -1,42 +1,53 @@
 import random
 
-def simulate_boarding(num_seats):
-    # Initialize the list of seats to be all empty
-    seats = []
-    for i in range(num_seats):
-        seats.append(False)
-    
-    # Choose a random seat for the first passenger
-    first_passenger_seat = random.randint(0, num_seats-1)
-    
-    # Mark the first passenger's seat as taken
-    seats[first_passenger_seat] = True
-    
-    # Loop over the remaining passengers
-    for passenger in range(1, num_seats):
-        # Get the passenger's assigned seat number
-        assigned_seat = passenger
-        
-        # Check if the passenger's assigned seat is empty
-        if seats[assigned_seat-1] == False:
-            # If the assigned seat is empty, sit there
-            seats[assigned_seat-1] = True
-        else:
-            # If the assigned seat is already taken, choose a random empty seat
-            empty_seats = []
-            for i in range(num_seats):
-                if seats[i] == False:
-                    empty_seats.append(i)
-            random_empty_seat = random.choice(empty_seats)
-            seats[random_empty_seat] = True
-            
+def simulate():
+  # Initialize the list of seats to be all empty
+  numSeats = 100
+  currentPassenger = 1
+  seats = []
+  for i in range(numSeats):
+    seats.append(-1)
+
+  # Choose a random seat for the first passenger
+  currentSeat = random.randint(1, numSeats - 1)
+
+  # Mark the first passenger's seat as taken
+  seats[currentSeat] = currentPassenger
+  currentPassenger += 1
+  currentSeat = 1
+  assigning = True
+  # Loop over the remaining passengers
+  while (assigning == True):
+    # If all 100 passengers have been assigned, exit the loop
+    if (currentPassenger > 100):
+      break
+
+    # Check if the passenger's assigned seat is empty
+    if seats[currentSeat] == -1:
+      # If the assigned seat is empty, sit there
+      seats[currentSeat] = currentPassenger
+    else:
+      # If the assigned seat is already taken, choose a random empty seat
+      for i in range(numSeats):
+        randomSeat = random.randint(1, numSeats)
+        if seats[i] == -1:
+          seats[randomSeat - 1] = currentPassenger
+          break
+    currentPassenger += 1
+    currentSeat += 1
+
     # Check if passenger 100 got her assigned seat
-    return seats[num_seats-1]
-    
+  if (seats[numSeats - 1] == 100):
+    return True
+  else:
+    return False
+
+
 # Run the simulation 10,000 times and compute the fraction of times passenger 100 gets her assigned seat
-num_simulations = 10000
-num_successes = 0
-for i in range(num_simulations):
-    if simulate_boarding(100):
-        num_successes += 1
-print("Probability of Passenger 100 getting her assigned seat:", num_successes / num_simulations)
+simulations = 10000
+successes = 0
+for i in range(simulations):
+  if simulate() == True:
+    successes += 1
+print("Probability of Passenger 100 getting her assigned seat:",
+      successes / simulations)
