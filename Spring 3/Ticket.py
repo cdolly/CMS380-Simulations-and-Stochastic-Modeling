@@ -1,3 +1,8 @@
+"""
+Ticket Program
+
+
+"""
 import random
 
 
