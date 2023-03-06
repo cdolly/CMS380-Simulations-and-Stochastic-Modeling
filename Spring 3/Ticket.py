@@ -5,7 +5,6 @@ Ticket Program
 """
 import random
 
-
 def simulate():
 
   # Initialize a list of empty seats
