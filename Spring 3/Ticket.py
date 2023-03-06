@@ -7,53 +7,39 @@ import random
 
 
 def simulate():
-  # Initialize the list of seats to be all empty
-  numSeats = 100
-  currentPassenger = 0
-  seats = []
-  for i in range(numSeats):
-    seats.append(-1)
 
-  # Choose a random seat for the first passenger
-  currentSeat = random.randint(0, numSeats - 1)
-
-  # Mark the first passenger's seat as taken
-  seats[currentSeat] = currentPassenger
-  currentPassenger += 1
-  currentSeat = 0
-  assigning = True
-  # Loop over the remaining passengers
-  while (assigning == True):
-    # If all 100 passengers have been assigned, exit the loop
-    if (currentPassenger > 100):
-      break
-
-    # Check if the passenger's assigned seat is empty
-    if seats[currentSeat] == -1:
-      # If the assigned seat is empty, sit there
-      seats[currentSeat] = currentPassenger
-    else:
-      # If the assigned seat is already taken, choose a random empty seat
-      for i in range(numSeats):
-        randomSeat = random.randint(0, numSeats - 1)
-        if seats[randomSeat] == -1:
-          seats[randomSeat] = currentPassenger
-          break
-    currentPassenger += 1
-    currentSeat += 1
-
-    # Check if passenger 100 got her assigned seat
-  if (seats[numSeats - 1] == 100):
+  # Initialize a list of empty seats
+  seats = [0] * 100
+  # Assign seat 1 to passenger 1
+  seats[0] = 1
+  # Loop through passengers 2 to 100
+  for i in range(2, 101):
+    assignedSeat = i - 1
+    if seats[assignedSeat - 1] == 0:  # If assigned seat is unoccupied
+      seats[assignedSeat - 1] = i
+    else:  # If assigned seat is occupied, find another unoccupied seat
+      emptySeats = []
+      for j in range(100):
+        if seats[j] == 0:
+          emptySeats.append(j)
+      currentSeat = random.choice(emptySeats)
+      seats[currentSeat] = i
+  # Check if passenger 100 sits in her assigned seat
+  if seats[99] == 100:
     return True
   else:
     return False
 
 
-# Run the simulation 10,000 times and compute the fraction of times passenger 100 gets her assigned seat
-simulations = 10000
+# Run the simulation for a large number of trials (100,000 in this case)
+trials = 1000
 successes = 0
-for i in range(simulations):
-  if simulate() == True:
+for i in range(trials):
+  if simulate():
     successes += 1
-print("Probability of Passenger 100 getting her assigned seat:",
-      successes / simulations)
+
+# Calculate the estimated probability that the 100th passenger gets her assigned seat
+probability = successes / trials
+
+# Print the estimated probability
+print("Probability that passenger 100 gets to sit in seat 100:", probability)
