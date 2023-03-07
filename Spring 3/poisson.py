@@ -3,54 +3,39 @@ Poisson Deliverable
 
 Cameron Dolly
 """
+import numpy as np
 import matplotlib.pyplot as plt
-import random
+from scipy.stats import poisson
 
 
-def simulate_binomial():
+# Define function to simulate binomial process
+def simulateBinomial():
+  # Set number of trials and probability of success
   n = 1000
   p = 0.025
-  num_heads = 0
-  for i in range(n):
-    if random.random() < p:
-      num_heads += 1
-  return num_heads
+  # Generate 1000 binomial trials and return outcomes
+  outcomes = np.random.binomial(n, p, size=1000)
+  return outcomes
 
 
-def simulate_poisson(lam, k):
+# Simulate binomial process and count outcomes
+results = simulateBinomial()
+counts = np.bincount(results)
+# Calculate fraction of trials for each outcome
+fractions = counts / 1000
 
-  # Definition of a poisson distribution
-  #  Expected Value = Lamba
-  # With lamba = 25 and k = 1000, over time the expected value would be lamba, or 25
+# Generate x-values for Poisson pmf
+x = np.arange(0, 1001)
+# Calculate Poisson pmf with lambda = 25
+poissonPMF = poisson.pmf(x, mu=25)
 
-  expectedValues = []
-  for i in range(1, k + 1):
-    expectedValues.append(lam)
-
-  return expectedValues
-
-
-# Simulate the binomial process 1000 times and record the number of heads in each trial
-n = 1000
-resultsBin = [simulate_binomial() for i in range(n)]
-# Poisson pmf with lambda = 25
-lam = 25
-resultsPoisson = simulate_poisson(lam, n)
-
-averagesBin = []
-total = 0
-for i in range(len(resultsBin)):
-  total += resultsBin[i]
-  averagesBin.append(total / (i + 1))
-
-# Plot the frequency of outcomes
-plt.plot(averagesBin, label='Binomial')
-
-plt.plot(resultsPoisson, label=f'Poisson PMF (λ={lam})')
-
-# Set plot labels and legend
-plt.xlabel('Trials')
-plt.ylabel('Number of Heads')
-plt.title('Binomial and Poisson PMFs')
+# Plot bar chart of binomial fractions and Poisson pmf
+plt.bar(range(len(fractions)), fractions, label="Binomial")
+plt.plot(x, poissonPMF, 'r-', label="Poisson")
+# Set x-axis limits to zoom in on part around 25
+plt.xlim([0, 75])
+plt.xlabel("Number of Heads")
+plt.ylabel("Fraction of Trials / Probability")
+plt.title("Binomial Process Simulation and Poisson PMF")
 plt.legend()
-plt.savefig("BinomialAndPoissonSimulaton.pdf", bbox_inches="tight")
+plt.savefig('BinomialAndPoissonSimulaton.pdf', bbox_inches="tight")
