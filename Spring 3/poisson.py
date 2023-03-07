@@ -3,39 +3,54 @@ Poisson Deliverable
 
 Cameron Dolly
 """
-import numpy as np
 import matplotlib.pyplot as plt
-from scipy.stats import poisson
 import random
 
 
 def simulate_binomial():
   n = 1000
   p = 0.025
-  heads = sum(1 for i in range(n) if random.random() < p)
-  return heads
+  num_heads = 0
+  for i in range(n):
+    if random.random() < p:
+      num_heads += 1
+  return num_heads
+
+
+def simulate_poisson(lam, k):
+
+  # Definition of a poisson distribution
+  #  Expected Value = Lamba
+  # With lamba = 25 and k = 1000, over time the expected value would be lamba, or 25
+
+  expectedValues = []
+  for i in range(1, k + 1):
+    expectedValues.append(lam)
+
+  return expectedValues
 
 
 # Simulate the binomial process 1000 times and record the number of heads in each trial
 n = 1000
-results = [simulate_binomial() for i in range(n)]
-
-# Compute the frequency of each outcome
-counts = np.bincount(results, minlength=n + 1)
-freqs = counts / n
-
-# Plot the frequency of each outcome
-plt.plot(freqs, '-o', label='Binomial PMF')
-
-# Plot the Poisson pmf with lambda = 25
+resultsBin = [simulate_binomial() for i in range(n)]
+# Poisson pmf with lambda = 25
 lam = 25
-x = np.arange(0, n + 1)
-poissonPmf = poisson.pmf(x, lam)
-plt.plot(poissonPmf, label=f'Poisson PMF (λ={lam})')
+resultsPoisson = simulate_poisson(lam, n)
+
+averagesBin = []
+total = 0
+for i in range(len(resultsBin)):
+  total += resultsBin[i]
+  averagesBin.append(total / (i + 1))
+
+# Plot the frequency of outcomes
+plt.plot(averagesBin, label='Binomial')
+
+plt.plot(resultsPoisson, label=f'Poisson PMF (λ={lam})')
 
 # Set plot labels and legend
 plt.xlabel('Trials')
-plt.ylabel('Probability')
+plt.ylabel('Number of Heads')
 plt.title('Binomial and Poisson PMFs')
 plt.legend()
-plt.savefig("BinomialSimulaton.pdf", bbox_inches="tight")
+plt.savefig("BinomialAndPoissonSimulaton.pdf", bbox_inches="tight")
