@@ -99,3 +99,6 @@ plt.xlabel("Utilization")
 plt.ylabel("Simulated Average Residence Time")
 plt.title("Utilization Vs Simulated Average Residence Time per Arrival Rate")
 plt.savefig('mm1Simulation.pdf')
+
+# Confidence intervals part goes below here
+#   Haven't done it yet.
