@@ -102,3 +102,6 @@ plt.savefig('mm1Simulation.pdf')
 
 # Confidence intervals part goes below here
 #   Haven't done it yet.
+arrival_rate = 0.05
+n = 1000
+avg_service_time = 1.0
