@@ -1,6 +1,13 @@
+"""
+Sprint 4 M/M/1 Simulation 
+
+Cameron Dolly
+"""
 from random import random
 from math import log
 import matplotlib.pyplot as plt
+import statistics
+import math
 #--- Generate an exponential random variate
 #
 # Input: mu, the parameter of the exponential distribution
@@ -50,23 +57,20 @@ def simulate(arrival_rate, avg_service_time, n):
     # Setup for first arrival
     enter_service_times[0] = arrival_times[0]
     departure_times[0] = enter_service_times[0] + service_times[0]
+
+    residence_times = [0] * n
     
     # Loop over all other arrivals
     for i in range(1, n):
-        placeholder = 0
         # Calculate enter_service_times[i]
         enter_service_times[i] = max(arrival_times[i], departure_times[i - 1])
         
         # Calculates departure_times[i]
         departure_times[i] = enter_service_times[i] + service_times[i]
         
-    # Calculate residence times
     # Calculates list of residence times
-    residence_times = [0] * n
-    for i in range(1, n):
         residence_times[i] = departure_times[i] - arrival_times[i]
     
-
     # Returns average residence time
     total_time = 0
     for i in residence_times:
@@ -76,32 +80,46 @@ def simulate(arrival_rate, avg_service_time, n):
 
 
 
-
-n = 5000
-avg_service_time = 1.0
 arrival_rate = 0.05
-
+n = 1000
+avg_service_time = 1.0
+total = 0
+numbers = []
+UCL_list = []
+LCL_list = []
+UCL_value = 0
+LCL_value = 0
 average_residence_times = {}
 utilization_per_arrival_rate = {}
+
 while arrival_rate < 0.96:
-    current_residence_time = simulate(arrival_rate, avg_service_time, n)
-    average_residence_times[arrival_rate] = current_residence_time
+    
+    for i in range (0,5):
+        current_residence_time = simulate(arrival_rate, avg_service_time, n)
+        total += current_residence_time
+        numbers.append(current_residence_time)
+        
+    Y_bar = total / 5
+    average_residence_times[arrival_rate] = Y_bar
     utilization_per_arrival_rate[arrival_rate] = arrival_rate * avg_service_time
+    
+    s = statistics.stdev(numbers)
+
+    UCL = (Y_bar + ((2.776 * s) / math.sqrt(5)))
+    LCL = (Y_bar - ((2.776 * s) / math.sqrt(5)))
+
+    UCL_list.append(UCL)
+    LCL_list.append(LCL)
+    
+    total = 0
     arrival_rate += 0.05
-
-
 
 x = utilization_per_arrival_rate.values()
 y = average_residence_times.values()
 
 plt.plot(x, y)
+plt.fill_between(x, (LCL_list), (UCL_list), color = 'b', alpha =0.1)
 plt.xlabel("Utilization")
 plt.ylabel("Simulated Average Residence Time")
 plt.title("Utilization Vs Simulated Average Residence Time per Arrival Rate")
 plt.savefig('mm1Simulation.pdf')
-
-# Confidence intervals part goes below here
-#   Haven't done it yet.
-arrival_rate = 0.05
-n = 1000
-avg_service_time = 1.0
