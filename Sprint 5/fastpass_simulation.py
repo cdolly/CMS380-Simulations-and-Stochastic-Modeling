@@ -224,7 +224,7 @@ plt.plot(high_load_residence_times_fastpass.keys(),
 plt.plot(high_load_residence_times_regular.keys(),
          high_load_residence_times_regular.values())
 plt.xlabel("Fraction of Fastpass Customers")
-plt.ylabel("Simulated Average Residence Time (s)")
+plt.ylabel("Simulated Average Residence Time (m)")
 plt.legend(["Fastpass", "Regular"], loc="lower right")
 plt.title("Fraction of Fastpass Customers Vs Avg. Residence Time @ High Load")
 plt.savefig('HighloadResidenceTimes.pdf')
@@ -262,7 +262,7 @@ plt.plot(high_load_residence_times_fastpass.keys(),
 plt.plot(high_load_residence_times_regular.keys(),
          high_load_residence_times_regular.values())
 plt.xlabel("Fraction of Fastpass Customers")
-plt.ylabel("Simulated Average Residence Time (s)")
+plt.ylabel("Simulated Average Residence Time (m)")
 plt.legend(["Fastpass", "Regular"], loc="lower right")
 plt.title("Fraction of Fastpass Customers Vs Avg. Residence Time @ Low Load")
 plt.savefig('LowloadResidenceTimes.pdf')
