@@ -1,126 +1,181 @@
-from math import factorial, log
-from random import random
+"""
+Final Project 
+Cameron Dolly
+"""
 from heapq import heappush, heappop, heapify
+from math import log, factorial
+from statistics import mean
+from random import random
+
+def erlang_b(m, e):
+    # Input: m, number of servers and e, the traffic intensity
+    # returns: the blocking probability
+  numerator = (e ** m) / factorial(m)
+  denominator = sum([(e ** i) / factorial(i) for i in range(m + 1)])
+  return numerator / denominator
 
 
 def rand_exp(rate):
-  return -log(random()) / rate
+    """ Generate an exponential random variate
+        input: rate, the parameter of the
+        distribution
+        returns: the exponential variate
+    """
+    return -log(random()) / rate
 
+def erlang_service_rate():
+  """
+  function to retrieve the erlang rate
+  """
+  total = rand_exp(1/.5) + rand_exp(1/.5)
+  return total
 
-def ErlangB(m, E):
-    num = ((E**m) / factorial(m))
-    den = sum([(E**i) / factorial(i) for i in range(m + 1)]) 
-    return (num / den)
+def simulate(arrival_rate, num_servers, service_type):
+    """ Simulate the M/M/1 queue, discrete-event style
+        input: arrival_rate  the system's arrival rate
+        returns: the average simulated residence time
+    """
+    # Stopping condition
+    max_num_arrivals = 50000
 
-
-def simulate(arrival_rate, avg_service_time, num_servers):
-    # Stopping condition for simulation
-    max_num_arrivals = 50
-    max_num_customers = num_servers
-    # Future Event list
-    fel = []
-    arrival_times = []
-    departure_times = []
-    # Count of customers that have been dropped due to exceded server limit
-    num_blocked_customers = 0
-    num_customers = 0
+    # Basic parameters
+    service_rate = 1.0
     time = 0.0
-    total_arrivals = 0
+    num_in_queue = 0
+    num_blocked = 0
+    num_arrivals = 0
+   
+    # Simulation data lists
+    arrival_times = []
+    enter_service_times = []
+    departure_times = []
 
-    # Generate first arrival
+    # Initialize FEL as an empty list
+    fel = []
+
+   
+    # Make the first arrival event
     interarrival_time = rand_exp(arrival_rate)
-    # Insert customer using heap method
-
-    new_event = (time + interarrival_time,'arrival')
-    total_arrivals += 1
+    new_event = (time + interarrival_time, 'arrival')
+   
+    # Insert with a heap operation
     heappush(fel, new_event)
-
-    # Begin loop
-    while(len(fel) > 0 and (len(arrival_times)) <= max_num_arrivals):
-        # Pop next event
+   
+    while len(fel) > 0 and num_arrivals < max_num_arrivals:
+       
+        # Pop the next event with a heap operation
         event = heappop(fel)
-
-        # Assiging event attributes
+       
+        # Event attributes
         event_time = event[0]
         event_type = event[1]
-
-        # Advance time
+       
+        # Advance simulated time
         time = event_time
-
-
-        # Process events
-        # If event type is an arrival
-        if(event_type == 'arrival'):
-            print('arrival')
-            arrival_times.append(time)
-            # Increment number of customers
-            num_customers += 1
-
-            # Process that customer and generate their departure time
-            new_event = (time + rand_exp(avg_service_time), 'departure')
-            heappush(fel,new_event)
-
-            # Generate next arrival
-            interarrival_time = rand_exp(arrival_rate)
-            new_event = (time + interarrival_time,'arrival')
-            total_arrivals += 1
-            heappush(fel, new_event)
-
-            # Enter service if space is available, otherwise drop
-            if(num_customers <= num_servers):
-                service_time = rand_exp(avg_service_time)
+       
+        ### Processesing the events
+       
+        # If event type is arrival
+        if event_type == 'arrival':
+            num_arrivals += 1
+            # added for multiple servers
+            if num_in_queue < num_servers:
+           
+              # Log arrival time
+              arrival_times.append(time)
+             
+              # Increment queue size
+              num_in_queue += 1
+             
+              # Generate next arrival
+              interarrival_time = rand_exp(arrival_rate)
+              new_event = (time + interarrival_time, 'arrival')
+              heappush(fel, new_event)
+             
+              # If queue was not empty and the number in the queue is less than the number of servers, enter service and generate a future departure event
+              if num_in_queue <= num_servers and num_in_queue > 0:
+                 
+                  # Log enter service time
+                  enter_service_times.append(time)
+                 
+                  # Generate new departure event
+                  if service_type == False:
+                    service_time = rand_exp(service_rate)
+                  else:
+                    service_time = erlang_service_rate()
+                  new_event = (time + service_time, 'departure')
+                  heappush(fel, new_event)
+            else:
+              # Generate next arrival for server
+              num_blocked += 1
+              interarrival_time = rand_exp(arrival_rate)
+              new_event = (time + interarrival_time, 'arrival')
+              heappush(fel, new_event)
+             
+             
+        # If event is a departure
+        elif event_type == 'departure':
+           
+            # Log departure time
+            departure_times.append(time)
+           
+            # Decrement queue size
+            num_in_queue -= 1
+           
+            # If there are more customers waiting, put the next one into service and generate a departure
+            if num_in_queue >= num_servers:
+               
+                # Log enter service time
+                enter_service_times.append(time)
+               
+                # Generate new departure event
+                if service_type == False:
+                  service_time = rand_exp(service_rate)
+                else:
+                  service_time = erlang_service_rate()
                 new_event = (time + service_time, 'departure')
                 heappush(fel, new_event)
 
-            # If a customer arrives when there is no service space, drop them and generate departure at their arrival time
-            elif(num_customers > num_servers):
-                num_customers -= 1
-                num_blocked_customers += 1
-                new_event = (time, 'departure')
-                heappush(fel, new_event)
-
-        # If event type is a departure
-        elif(event_type == 'departure'):
-            print('departure')
-            departure_times.append(time)
-            num_customers -= 1
-            
-
-        print(num_customers)
+    return num_blocked/num_arrivals # ratio
+   
 
 
 
-    
-    print('Total arrivals', total_arrivals)
-    print('Blocked customers', num_blocked_customers)
-    return num_blocked_customers / total_arrivals
+trials = []
 
-            
+print("Trial with service rate = 1")
+# Trials with service rate 1
+# 13 servers
+for trial in range(5):
+    trials.append(simulate(10, 13, False))
 
-        
+print("Simulated Average of 13 servers:", mean(trials))
+print("Erlang-B with 13 Servers:", erlang_b(13, 10))
+trials = []
+
+ # 18 servers
+for trial in range(5):
+    trials.append(simulate(10, 18, False))
+
+print("Simulated Average of 18 servers:", mean(trials))
+print("Erlang-B with 18 Servers:", erlang_b(18, 10))
+trials = []
+
+# 21 servers
+for trial in range(5):
+    trials.append(simulate(10, 21, False))
+
+print("Simulated Average of 21 servers:", mean(trials))
+print("Erlang-B with 21 Servers:", erlang_b(21, 10))
+trials = []
 
 
+#2-stage Erlang Distribution Service Rate trial
+print("Trials w/ 2-stage Erlang Distribution Service Rate")
+ 
+for i in range(10, 21):
+    for trial in range(5):
+        trials.append(simulate(10, i, True))
 
+    print("Blocking Rate for", i, " servers:", mean(trials))
 
-
-
-
-arrival_rate = 10
-avg_service_time = 1
-num_servers = 13
-
-result = simulate(arrival_rate,avg_service_time,num_servers)
-print('13',result)
-
-"""
-num_servers = 17
-
-result = simulate(arrival_rate,avg_service_time,num_servers)
-print('17',result)
-
-
-num_servers = 21
-
-result = simulate(arrival_rate,avg_service_time,num_servers)
-print('21',result)
-"""
