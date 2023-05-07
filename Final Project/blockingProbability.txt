@@ -1,0 +1,10 @@
+How many servers are required to keep the blocking probability below 1% if the service times are Erlang distributed? How does that compare to the original case of exponentially distributed service times?
+
+  In order to keep blocking probability below 1% for service times that are     Erlang distributed, we need more than 81 servers. We see that after roughly   20 servers, the decrease in blocking probability dimishes quickly. 
+
+  Compared to the original case, this is requires significantly more servers.   With exponentially distributed times, we only need around 14 or 15 servers    to have less than a 1% blocking probability.
+
+
+
+
+  
