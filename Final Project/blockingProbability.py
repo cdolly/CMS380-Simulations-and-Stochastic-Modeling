@@ -1,15 +1,12 @@
-"""
-Final Project 
-Cameron Dolly
-"""
 from heapq import heappush, heappop, heapify
 from math import log, factorial
 from statistics import mean
 from random import random
 
 def erlang_b(m, e):
-    # Input: m, number of servers and e, the traffic intensity
-    # returns: the blocking probability
+    # This function calculates the blocking     probability of a system
+    # with `num_servers` servers and a traffic intensity of `traffic_intensity`
+    # using the Erlang-B formula.
   numerator = (e ** m) / factorial(m)
   denominator = sum([(e ** i) / factorial(i) for i in range(m + 1)])
   return numerator / denominator
@@ -173,9 +170,10 @@ trials = []
 #2-stage Erlang Distribution Service Rate trial
 print("Trials w/ 2-stage Erlang Distribution Service Rate")
  
-for i in range(10, 21):
+for i in range(10, 101):
     for trial in range(5):
         trials.append(simulate(10, i, True))
 
-    print("Blocking Rate for", i, " servers:", mean(trials))
+    print("Blocking probability for", i, " servers:", mean(trials))
+trials.clear()
 
